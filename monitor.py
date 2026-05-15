@@ -130,7 +130,7 @@ def main() -> None:
         return
 
     count = run_once()
-    print(f"Gotovo. Novih listinga: {count}")
+    print(f"Gotovo. Novih listinga: {count}", flush=True)
 
 
 if __name__ == "__main__":
