@@ -58,6 +58,7 @@ def _parse_items(html: str) -> list[dict]:
                 "surface": surface,
                 "bedrooms": bedrooms,
                 "rooms": rooms,
+                "source": "Rent Valley",
             }
         )
     return items

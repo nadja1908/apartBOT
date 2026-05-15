@@ -14,7 +14,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from rentvalley import fetch_listings
+from sources import fetch_all_listings
 from telegram_notify import send_message, send_test
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -60,7 +60,10 @@ def save_seen(seen: set[str]) -> None:
 
 
 def format_listing(item: dict) -> str:
-    lines = [item["title"]]
+    lines = []
+    if item.get("source"):
+        lines.append(f"[{item['source']}]")
+    lines.append(item["title"])
     if item.get("city"):
         lines.append(item["city"])
     details = []
@@ -80,7 +83,7 @@ def run_once(*, notify: bool = True) -> int:
     seen = load_seen()
     new_count = 0
 
-    for item in fetch_listings():
+    for item in fetch_all_listings():
         listing_id = str(item["id"])
         if listing_id in seen:
             continue
@@ -95,7 +98,7 @@ def run_once(*, notify: bool = True) -> int:
 
 def seed_seen() -> int:
     seen = load_seen()
-    for item in fetch_listings():
+    for item in fetch_all_listings():
         seen.add(str(item["id"]))
     save_seen(seen)
     return len(seen)
