@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY monitor.py rentvalley.py telegram_notify.py loop_cloud.py ./
+COPY monitor.py rentvalley.py verra.py sources.py thehague_realty.py telegram_notify.py loop_cloud.py ./
 
 ENV DATA_DIR=/data
 ENV CHECK_INTERVAL_SEC=600
