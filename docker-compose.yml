@@ -1,0 +1,13 @@
+services:
+  rentvalley-monitor:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      CHECK_INTERVAL_SEC: "600"
+    volumes:
+      - rentvalley-data:/data
+
+volumes:
+  rentvalley-data:

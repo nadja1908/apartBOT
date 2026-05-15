@@ -1,0 +1,90 @@
+================================================================================
+  RENT VALLEY MONITOR — 24/7 U CLOUDU (bez tvog PC-a)
+================================================================================
+
+Folder: C:\Users\djord\listing-monitor
+
+Dva nacina — izaberi jedan:
+
+--------------------------------------------------------------------------------
+A) GITHUB ACTIONS — BESPLATNO (preporuceno, najlakse)
+--------------------------------------------------------------------------------
+
+Radi 24/7 u oblaku. Ne placas VPS. Provera svakih 10 min.
+
+KORACI:
+
+1. Napravi nalog na https://github.com (ako nemas)
+
+2. Novi repozitorijum:
+   - New repository
+   - Ime: rentvalley-monitor
+   - Private (preporuceno)
+   - Create
+
+3. Upload fajlova (na GitHubu: Add file -> Upload files):
+   - monitor.py, rentvalley.py, telegram_notify.py
+   - requirements.txt
+   - seen_ids.seed.json
+   - .github/workflows/monitor.yml
+   (NE uploaduj .env — tajna je!)
+
+4. Secrets (podesavanje Telegrama):
+   - Repo -> Settings -> Secrets and variables -> Actions
+   - New repository secret:
+       TELEGRAM_BOT_TOKEN = (tvoj token)
+       TELEGRAM_CHAT_ID   = (tvoj chat id)
+
+5. Prvi run:
+   - Actions tab -> Rent Valley Monitor -> Run workflow
+
+6. Gotovo — automatski svakih 10 min u oblaku.
+
+Napomena: GitHub Actions na free planu je dovoljan za ovakav zadatak.
+
+
+--------------------------------------------------------------------------------
+B) VPS (Hetzner / DigitalOcean) — ~4-5 EUR/mesec
+--------------------------------------------------------------------------------
+
+Pravi server koji radi non-stop.
+
+KORACI:
+
+1. Registracija:
+   - Hetzner: https://www.hetzner.com/cloud (CX22 ~4 EUR)
+   - ili DigitalOcean: https://www.digitalocean.com
+
+2. Napravi server (Ubuntu 24.04), zapamti IP i root password
+
+3. Povezi se (PowerShell na Windowsu):
+   ssh root@TVOJ_IP
+
+4. Na serveru:
+   apt update && apt install -y docker.io docker-compose-plugin git
+
+5. Upload projekta (sa svog PC-a u novom PowerShell prozoru):
+   scp -r C:\Users\djord\listing-monitor root@TVOJ_IP:/root/rentvalley
+
+6. Na serveru:
+   cd /root/rentvalley
+   cp .env.example .env
+   nano .env          (unesi token i chat id, Ctrl+O, Enter, Ctrl+X)
+   cp seen_ids.seed.json /tmp/init 2>/dev/null || true
+   bash deploy-vps.sh
+
+7. Provera:
+   docker compose logs -f
+
+Zaustavi: docker compose down
+
+
+--------------------------------------------------------------------------------
+VAZNO
+--------------------------------------------------------------------------------
+
+- seen_ids.seed.json = lista oglasa koje NE saljes ponovo (vec vidjeni)
+- Novi oglas na rentvalley.nl -> Telegram poruka
+- Token NIKAD na GitHub u kodu — samo u Secrets ili .env na serveru
+
+================================================================================
